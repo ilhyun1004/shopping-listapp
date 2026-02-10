@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쇼핑 리스트</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        #itemInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        #itemInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #addBtn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #addBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #addBtn:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        #shoppingList {
+            list-style: none;
+        }
+
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .shopping-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .shopping-item.checked {
+            opacity: 0.6;
+        }
+
+        .shopping-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .shopping-item span {
+            flex: 1;
+            font-size: 16px;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .shopping-item.checked span {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .delete-btn {
+            padding: 8px 15px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #ff3838;
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        .clear-all-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .clear-all-btn:hover {
+            background: #ff3838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .clear-all-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 쇼핑 리스트</h1>
+
+        <div class="input-section">
+            <input
+                type="text"
+                id="itemInput"
+                placeholder="구매할 물건을 입력하세요..."
+                autocomplete="off"
+            >
+            <button id="addBtn">추가</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">전체</div>
+                <div class="stat-value" id="totalItems">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">구매 완료</div>
+                <div class="stat-value" id="checkedItems">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">남은 항목</div>
+                <div class="stat-value" id="remainingItems">0</div>
+            </div>
+        </div>
+
+        <ul id="shoppingList"></ul>
+
+        <button id="clearAllBtn" class="clear-all-btn" disabled>모두 삭제</button>
+    </div>
+
+    <script>
+        let shoppingItems = [];
+
+        // DOM 요소 선택
+        const itemInput = document.getElementById('itemInput');
+        const addBtn = document.getElementById('addBtn');
+        const shoppingList = document.getElementById('shoppingList');
+        const clearAllBtn = document.getElementById('clearAllBtn');
+        const totalItemsEl = document.getElementById('totalItems');
+        const checkedItemsEl = document.getElementById('checkedItems');
+        const remainingItemsEl = document.getElementById('remainingItems');
+
+        // 로컬 스토리지에서 데이터 불러오기
+        function loadFromStorage() {
+            const stored = localStorage.getItem('shoppingList');
+            if (stored) {
+                shoppingItems = JSON.parse(stored);
+                renderList();
+            }
+        }
+
+        // 로컬 스토리지에 저장
+        function saveToStorage() {
+            localStorage.setItem('shoppingList', JSON.stringify(shoppingItems));
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            const total = shoppingItems.length;
+            const checked = shoppingItems.filter(item => item.checked).length;
+            const remaining = total - checked;
+
+            totalItemsEl.textContent = total;
+            checkedItemsEl.textContent = checked;
+            remainingItemsEl.textContent = remaining;
+
+            clearAllBtn.disabled = total === 0;
+        }
+
+        // 리스트 렌더링
+        function renderList() {
+            if (shoppingItems.length === 0) {
+                shoppingList.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"></path>
+                        </svg>
+                        <p>쇼핑 리스트가 비어있습니다.<br>구매할 물건을 추가해보세요!</p>
+                    </div>
+                `;
+            } else {
+                shoppingList.innerHTML = shoppingItems.map((item, index) => `
+                    <li class="shopping-item ${item.checked ? 'checked' : ''}">
+                        <input
+                            type="checkbox"
+                            ${item.checked ? 'checked' : ''}
+                            onchange="toggleItem(${index})"
+                        >
+                        <span>${item.text}</span>
+                        <button class="delete-btn" onclick="deleteItem(${index})">삭제</button>
+                    </li>
+                `).join('');
+            }
+            updateStats();
+        }
+
+        // 아이템 추가
+        function addItem() {
+            const text = itemInput.value.trim();
+            if (text === '') {
+                alert('구매할 물건을 입력해주세요!');
+                return;
+            }
+
+            shoppingItems.push({
+                text: text,
+                checked: false,
+                id: Date.now()
+            });
+
+            itemInput.value = '';
+            saveToStorage();
+            renderList();
+            itemInput.focus();
+        }
+
+        // 아이템 체크/체크 해제
+        function toggleItem(index) {
+            shoppingItems[index].checked = !shoppingItems[index].checked;
+            saveToStorage();
+            renderList();
+        }
+
+        // 아이템 삭제
+        function deleteItem(index) {
+            shoppingItems.splice(index, 1);
+            saveToStorage();
+            renderList();
+        }
+
+        // 모두 삭제
+        function clearAll() {
+            if (confirm('모든 항목을 삭제하시겠습니까?')) {
+                shoppingItems = [];
+                saveToStorage();
+                renderList();
+            }
+        }
+
+        // 이벤트 리스너
+        addBtn.addEventListener('click', addItem);
+        itemInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addItem();
+            }
+        });
+        clearAllBtn.addEventListener('click', clearAll);
+
+        // 초기화
+        loadFromStorage();
+    </script>
+</body>
+</html>
