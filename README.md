@@ -24,21 +24,26 @@
 
 ## 사용 방법
 
-1. `shopping-list.html` 파일을 브라우저에서 열기
+1. `index.html` 파일을 브라우저에서 열기
 2. 입력창에 구매할 물건 입력
 3. "추가" 버튼 클릭 또는 Enter 키
 4. 체크박스로 구매 완료 표시
 5. 삭제 버튼으로 아이템 제거
 
+## 온라인 데모
+
+GitHub Pages에서 바로 사용해보세요:
+👉 https://ilhyun1004.github.io/shopping-listapp/
+
 ## 로컬 실행
 
 ```bash
 # 파일을 직접 브라우저에서 열기
-open shopping-list.html
+open index.html
 
 # 또는 로컬 서버 실행
 python -m http.server 8000
-# http://localhost:8000/shopping-list.html 접속
+# http://localhost:8000 접속
 ```
 
 ## 테스트
